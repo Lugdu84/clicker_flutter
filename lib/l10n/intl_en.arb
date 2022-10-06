@@ -1,0 +1,5 @@
+{
+    "game_start_button": "Start to count",
+    "point_record": "Le joueur {bestPlayerName} détient le record, qui est : {bestScore}",
+    "click_count": "Nombre de clicks : {clickCount}"
+}
