@@ -22,14 +22,21 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(clickCount) => "Nombre de clicks : ${clickCount}";
 
-  static String m1(bestPlayerName, bestScore) =>
+  static String m1(name) => "Nome du joueur : ${name}";
+
+  static String m2(bestPlayerName, bestScore) =>
       "Le joueur ${bestPlayerName} détient le record, qui est : ${bestScore}";
+
+  static String m3(score) =>
+      "Score : ${Intl.plural(score, one: '1 point', other: '${score} points')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "click_count": m0,
         "game_start_button":
             MessageLookupByLibrary.simpleMessage("Commencer à compter"),
-        "point_record": m1
+        "nomeDuJoueurGamename": m1,
+        "point_record": m2,
+        "score_pamescore_points": m3
       };
 }

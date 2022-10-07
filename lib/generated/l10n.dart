@@ -79,6 +79,26 @@ class S {
       args: [clickCount],
     );
   }
+
+  /// `Score : {score, plural, one{1 point} other{{score} points}}`
+  String score_pamescore_points(num score) {
+    return Intl.message(
+      'Score : ${Intl.plural(score, one: '1 point', other: '$score points')}',
+      name: 'score_pamescore_points',
+      desc: '',
+      args: [score],
+    );
+  }
+
+  /// `Nome du joueur : {name}`
+  String nomeDuJoueurGamename(Object name) {
+    return Intl.message(
+      'Nome du joueur : $name',
+      name: 'nomeDuJoueurGamename',
+      desc: '',
+      args: [name],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

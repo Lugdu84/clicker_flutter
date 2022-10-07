@@ -66,8 +66,8 @@ class _GameScreenState extends State<GameScreen> {
   Widget _generatedList(BuildContext context, int index) {
     final game = _results[index];
     return ListTile(
-      title: Text("Nome du joueur : ${game.name}"),
-      subtitle: Text("Score : ${game.score}"),
+      title: Text(S.of(context).nomeDuJoueurGamename(game.name)),
+      subtitle: Text(S.current.score_pamescore_points(game.score)),
       trailing: const Icon(Icons.military_tech),
     );
   }

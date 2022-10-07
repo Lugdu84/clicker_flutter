@@ -1,5 +1,7 @@
 {
-    "game_start_button": "Commencer à compter",
-    "point_record": "Le joueur {bestPlayerName} détient le record, qui est : {bestScore}",
-    "click_count": "Nombre de clicks : {clickCount}"
+  "game_start_button": "Commencer à compter",
+  "point_record": "Le joueur {bestPlayerName} détient le record, qui est : {bestScore}",
+  "click_count": "Nombre de clicks : {clickCount}",
+  "score_pamescore_points": "Score : {score, plural, one{1 point} other{{score} points}}",
+  "nomeDuJoueurGamename": "Nome du joueur : {name}"
 }
