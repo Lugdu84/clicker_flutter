@@ -33,8 +33,12 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "click_count": m0,
+        "enterYourNickname":
+            MessageLookupByLibrary.simpleMessage("Entrez votre pseudo"),
         "game_start_button":
             MessageLookupByLibrary.simpleMessage("Commencer à compter"),
+        "hallOfFame":
+            MessageLookupByLibrary.simpleMessage("Temple de la renommée"),
         "nomeDuJoueurGamename": m1,
         "point_record": m2,
         "score_pamescore_points": m3

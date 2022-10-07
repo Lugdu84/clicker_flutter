@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:clicker/generated/l10n.dart';
-import 'package:clicker/model/game_result.dart';
-import 'package:clicker/view/hall_of_fame_view.dart';
+import 'package:clicker/view/hall_of_fame_screen.dart';
 import 'package:flutter/material.dart';
-
-import '../viewModel/hall_of_fame_vm.dart';
+import '../model/game_manager.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -14,52 +12,39 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final vm = HallOfFameViewModel();
-  int _clickCount = 0;
-  int? _bestScore;
-  String _bestPlayerName = "";
-  bool _isCounting = false;
-  String _currentPlayerName = "";
-
+  final gameManager = GameManager();
   final _nameController = TextEditingController();
+  String _currentName = "";
 
   _addCountOne() {
     setState(() {
-      _clickCount++;
+      gameManager.currentGame?.userScored();
     });
   }
 
   _start() {
     setState(() {
-      _isCounting = true;
-      _clickCount = 0;
-      Timer(const Duration(seconds: 10), _stopGame);
+      gameManager.startNewGame(userName: _currentName);
+      Timer(Duration(seconds: GameManager.gamesDuration), _stopGame);
     });
   }
 
   _stopGame() {
     setState(() {
-      _isCounting = false;
-      vm.results.add(GameResult(name: _currentPlayerName, score: _clickCount));
-      vm.results.sort((a, b) => b.score.compareTo(a.score));
-      print(vm.results.length);
-      if (_bestScore == null || _clickCount > _bestScore!) {
-        _bestPlayerName = _currentPlayerName;
-        _bestScore = _clickCount;
-      }
+      gameManager.stopCurrentGame();
     });
   }
 
   _currentUserNameChanged(String newUserName) {
     setState(() {
-      _currentPlayerName = newUserName;
+      _currentName = newUserName;
     });
   }
 
   _showHallOfFame(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HallOfFameView(
-        results: vm.results,
+      return HallOfFameScreen(
+        games: gameManager.bestGameList,
       );
     }));
   }
@@ -85,6 +70,8 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bestGame = gameManager.bestGame;
+    final currentGame = gameManager.currentGame;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Clicker"),
@@ -93,24 +80,28 @@ class _GameScreenState extends State<GameScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!_isCounting)
+              if (!gameManager.isGameIsProgress)
                 TextField(
+                  decoration: InputDecoration(
+                      hintText: S.of(context).enterYourNickname),
                   controller: _nameController,
                   autocorrect: false,
                   onChanged: _currentUserNameChanged,
                 ),
-              if (_bestScore != null)
-                Text(S.current.point_record(_bestPlayerName, _bestScore!)),
-              Text(S.current.click_count(_clickCount)),
-              if (_isCounting)
+              if (bestGame != null)
+                Text(S.current
+                    .point_record(bestGame.playerName, bestGame.score)),
+              if (currentGame != null)
+                Text(S.current.click_count(currentGame.score)),
+              if (gameManager.isGameIsProgress)
                 IconButton(
                     onPressed: _addCountOne, icon: const Icon(Icons.plus_one)),
-              if (!_isCounting)
+              if (!gameManager.isGameIsProgress)
                 ElevatedButton(
                     onPressed: () => _showHallOfFame(context),
-                    child: Text("Hall of fame")),
+                    child: Text(S.of(context).hallOfFame)),
               const Spacer(),
-              if (!_isCounting)
+              if (!gameManager.isGameIsProgress)
                 ElevatedButton(
                     onPressed: _start,
                     child: Text(S.of(context).game_start_button)),

@@ -99,6 +99,26 @@ class S {
       args: [name],
     );
   }
+
+  /// `Hall of Fame`
+  String get hallOfFame {
+    return Intl.message(
+      'Hall of Fame',
+      name: 'hallOfFame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your nickname`
+  String get enterYourNickname {
+    return Intl.message(
+      'Enter your nickname',
+      name: 'enterYourNickname',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

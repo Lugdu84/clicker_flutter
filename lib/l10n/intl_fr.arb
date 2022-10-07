@@ -3,5 +3,7 @@
   "point_record": "Le joueur {bestPlayerName} détient le record, qui est : {bestScore}",
   "click_count": "Nombre de clicks : {clickCount}",
   "score_pamescore_points": "Score : {score, plural, one{1 point} other{{score} points}}",
-  "nomeDuJoueurGamename": "Nome du joueur : {name}"
+  "nomeDuJoueurGamename": "Nome du joueur : {name}",
+  "hallOfFame": "Temple de la renommée",
+  "enterYourNickname": "Entrez votre pseudo"
 }
