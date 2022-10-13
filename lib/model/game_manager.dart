@@ -1,9 +1,17 @@
+import 'package:clicker/interfaces/games_local_data_manager.dart';
+
 import 'game.dart';
 
 class GameManager {
-  final List<Game> _previousGames = [];
+  List<Game> _previousGames = [];
   Game? _currentGame;
   static const gamesDuration = 10;
+  final GamesLocalDataManager _localDataManager = GamesLocalDataManager();
+
+  Future<List<Game>> loadGameListFromLocalData() async {
+    _previousGames = await _localDataManager.getGamesList();
+    return _previousGames;
+  }
 
   Game? get currentGame => _currentGame;
   Game? get bestGame {
@@ -37,6 +45,7 @@ class GameManager {
     if (game != null) {
       game.stop();
       _previousGames.add(game);
+      _localDataManager.addNewGame(game);
     }
   }
 }

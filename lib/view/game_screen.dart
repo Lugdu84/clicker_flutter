@@ -4,34 +4,65 @@ import 'package:clicker/view/hall_of_fame_screen.dart';
 import 'package:flutter/material.dart';
 import '../model/game_manager.dart';
 
-class GameScreen extends StatefulWidget {
-  const GameScreen({Key? key}) : super(key: key);
+class GameScreen extends StatelessWidget {
+  final gameManager = GameManager();
+
+  GameScreen({Key? key}) : super(key: key);
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Clicker"),
+        ),
+        body: SafeArea(
+          child: FutureBuilder(
+            future: gameManager.loadGameListFromLocalData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData || snapshot.hasError) {
+                return _GameScreenContent(
+                  gameManager: gameManager,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+        ));
+  }
 }
 
-class _GameScreenState extends State<GameScreen> {
-  final gameManager = GameManager();
+class _GameScreenContent extends StatefulWidget {
+  final GameManager gameManager;
+  const _GameScreenContent({Key? key, required this.gameManager})
+      : super(key: key);
+
+  @override
+  _GameScreenContentState createState() => _GameScreenContentState();
+}
+
+class _GameScreenContentState extends State<_GameScreenContent> {
   final _nameController = TextEditingController();
   String _currentName = "";
 
   _addCountOne() {
     setState(() {
-      gameManager.currentGame?.userScored();
+      widget.gameManager.currentGame?.userScored();
     });
   }
 
   _start() {
     setState(() {
-      gameManager.startNewGame(userName: _currentName);
+      widget.gameManager.startNewGame(userName: _currentName);
       Timer(Duration(seconds: GameManager.gamesDuration), _stopGame);
     });
   }
 
   _stopGame() {
     setState(() {
-      gameManager.stopCurrentGame();
+      widget.gameManager.stopCurrentGame();
     });
   }
 
@@ -44,7 +75,7 @@ class _GameScreenState extends State<GameScreen> {
   _showHallOfFame(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return HallOfFameScreen(
-        games: gameManager.bestGameList,
+        games: widget.gameManager.bestGameList,
       );
     }));
   }
@@ -55,58 +86,35 @@ class _GameScreenState extends State<GameScreen> {
     super.dispose();
   }
 
-  // Widget _separatedList(BuildContext context, int index) {
-  //   return const Divider(thickness: 1);
-  // }
-
-  // Widget _generatedList(BuildContext context, int index) {
-  //   final game = _results[index];
-  //   return ListTile(
-  //     title: Text(S.of(context).nomeDuJoueurGamename(game.name)),
-  //     subtitle: Text(S.current.score_pamescore_points(game.score)),
-  //     trailing: const Icon(Icons.military_tech),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final bestGame = gameManager.bestGame;
-    final currentGame = gameManager.currentGame;
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Clicker"),
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (!gameManager.isGameIsProgress)
-                TextField(
-                  decoration: InputDecoration(
-                      hintText: S.of(context).enterYourNickname),
-                  controller: _nameController,
-                  autocorrect: false,
-                  onChanged: _currentUserNameChanged,
-                ),
-              if (bestGame != null)
-                Text(S.current
-                    .point_record(bestGame.playerName, bestGame.score)),
-              if (currentGame != null)
-                Text(S.current.click_count(currentGame.score)),
-              if (gameManager.isGameIsProgress)
-                IconButton(
-                    onPressed: _addCountOne, icon: const Icon(Icons.plus_one)),
-              if (!gameManager.isGameIsProgress)
-                ElevatedButton(
-                    onPressed: () => _showHallOfFame(context),
-                    child: Text(S.of(context).hallOfFame)),
-              const Spacer(),
-              if (!gameManager.isGameIsProgress)
-                ElevatedButton(
-                    onPressed: _start,
-                    child: Text(S.of(context).game_start_button)),
-            ],
+    final bestGame = widget.gameManager.bestGame;
+    final currentGame = widget.gameManager.currentGame;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!widget.gameManager.isGameIsProgress)
+          TextField(
+            decoration:
+                InputDecoration(hintText: S.of(context).enterYourNickname),
+            controller: _nameController,
+            autocorrect: false,
+            onChanged: _currentUserNameChanged,
           ),
-        ));
+        if (bestGame != null)
+          Text(S.current.point_record(bestGame.playerName, bestGame.score)),
+        if (currentGame != null) Text(S.current.click_count(currentGame.score)),
+        if (widget.gameManager.isGameIsProgress)
+          IconButton(onPressed: _addCountOne, icon: const Icon(Icons.plus_one)),
+        if (!widget.gameManager.isGameIsProgress)
+          ElevatedButton(
+              onPressed: () => _showHallOfFame(context),
+              child: Text(S.of(context).hallOfFame)),
+        const Spacer(),
+        if (!widget.gameManager.isGameIsProgress)
+          ElevatedButton(
+              onPressed: _start, child: Text(S.of(context).game_start_button)),
+      ],
+    );
   }
 }
